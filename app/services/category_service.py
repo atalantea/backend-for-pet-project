@@ -9,7 +9,7 @@ class CategoryNotFoundError(Exception):
 
 
 class CategoryService:
-    """Ключевые операции с задачами, включая бизнес-логику, валидацию и прочее"""
+    """Ключевые операции с категориями, включая бизнес-логику, валидацию и прочее"""
 
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
@@ -28,7 +28,7 @@ class CategoryService:
     async def update_category(
         self, category_id: str, payload: CategoryUpdate
     ) -> CategoryRead:
-        category = await self.repository.get_by_id(category_id)
+        category = await self.repository.get_by_id(category_id=category_id)
 
         if category is None:
             raise CategoryNotFoundError
@@ -39,7 +39,7 @@ class CategoryService:
         return CategoryRead.model_validate(category)
 
     async def delete_category(self, category_id: str) -> None:
-        category = await self.repository.get_by_id(category_id)
+        category = await self.repository.get_by_id(category_id=category_id)
 
         if category is None:
             raise CategoryNotFoundError
