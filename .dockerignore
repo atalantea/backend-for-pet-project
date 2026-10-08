@@ -16,3 +16,4 @@ venv/
 .ruff_cache/
 .vscode/
 .gitignore
+tests/

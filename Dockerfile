@@ -1,9 +1,18 @@
 FROM python:3.15.0rc2 AS builder
 
-COPY requirements.txt /tmp/requirements.txt
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
-RUN python -m venv /opt/venv \
-    && /opt/venv/bin/pip install --no-cache-dir -r /tmp/requirements.txt
+ENV UV_PROJECT_ENVIRONMENT=/opt/venv
+
+WORKDIR /app
+
+# Слой зависимостей — кэшируется, пока не изменится pyproject.toml/uv.lock
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-install-project --no-dev
+
+# Слой кода — инвалидируется при каждом изменении исходников
+COPY . .
+RUN uv sync --frozen --no-dev
 
 FROM python:3.15.0rc2
 
@@ -19,4 +28,4 @@ USER appuser
 
 EXPOSE 8000
 
-CMD ["uvicorn", "app.pet-project:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

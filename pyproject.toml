@@ -22,6 +22,7 @@ dependencies = [
     "setuptools",
     "uvicorn",
     "sqlalchemy",
+    "uv",
 ]
 
 [tool.setuptools.packages.find]
